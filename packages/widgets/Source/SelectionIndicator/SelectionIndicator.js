@@ -41,13 +41,22 @@ css: { "cesium-selection-wrapper-visible" : isVisible }'
   this._element = el;
 
   const svgNS = "http://www.w3.org/2000/svg";
-  const path =
-    "M -34 -34 L -34 -11.25 L -30 -15.25 L -30 -30 L -15.25 -30 L -11.25 -34 L -34 -34 z M 11.25 -34 L 15.25 -30 L 30 -30 L 30 -15.25 L 34 -11.25 L 34 -34 L 11.25 -34 z M -34 11.25 L -34 34 L -11.25 34 L -15.25 30 L -30 30 L -30 15.25 L -34 11.25 z M 34 11.25 L 30 15.25 L 30 30 L 15.25 30 L 11.25 34 L 34 34 L 34 11.25 z";
+  // const path =
+  //   "M -34 -34 L -34 -11.25 L -30 -15.25 L -30 -30 L -15.25 -30 L -11.25 -34 L -34 -34 z M 11.25 -34 L 15.25 -30 L 30 -30 L 30 -15.25 L 34 -11.25 L 34 -34 L 11.25 -34 z M -34 11.25 L -34 34 L -11.25 34 L -15.25 30 L -30 30 L -30 15.25 L -34 11.25 z M 34 11.25 L 30 15.25 L 30 30 L 15.25 30 L 11.25 34 L 34 34 L 34 11.25 z";
+
+  // const path = "M cx cy m -r, 0 a r,r 0 1,1 (r * 2),0 a r,r 0 1,1 -(r * 2),0";
+  // const path = " M 195 283 A 100 100 0 1 1 237 280";
+  // const path = "m 10 10 l 0 20 l 30 30 z";
+  // const path = "M 0 0 C 100 0, 0 100, 100 100";
+  const path = `M 0, 0
+  m -25, 0
+  a 25,25 0 1,0 50,0
+  a 25,25 0 1,0 -50,0`;
 
   const svg = document.createElementNS(svgNS, "svg:svg");
-  svg.setAttribute("width", 160);
-  svg.setAttribute("height", 160);
-  svg.setAttribute("viewBox", "0 0 160 160");
+  svg.setAttribute("width", 200);
+  svg.setAttribute("height", 200);
+  svg.setAttribute("viewBox", "0 0 200 200");
 
   const group = document.createElementNS(svgNS, "g");
   group.setAttribute("transform", "translate(80,80)");
@@ -68,6 +77,8 @@ css: { "cesium-selection-wrapper-visible" : isVisible }'
   this._viewModel = viewModel;
 
   knockout.applyBindings(this._viewModel, this._element);
+
+  console.log("Clicked!");
 }
 
 Object.defineProperties(SelectionIndicator.prototype, {

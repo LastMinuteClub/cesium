@@ -54,6 +54,18 @@ function SelectionIndicatorViewModel(
   this.position = undefined;
 
   /**
+   * Gets or sets the world position of the object for which to display the selection indicator.
+   * @type {Cartesian3}
+   */
+  this.mousePosition = undefined;
+
+  /**
+   * Gets or sets the world position of the object for which to display the selection indicator.
+   * @type {Cartesian3}
+   */
+  this.offset = undefined;
+
+  /**
    * Gets or sets the visibility of the selection indicator.
    * @type {boolean}
    */
@@ -102,16 +114,53 @@ function SelectionIndicatorViewModel(
   };
 }
 
+// let offset = { x: 0, y: 0 };
+
 /**
  * Updates the view of the selection indicator to match the position and content properties of the view model.
  * This function should be called as part of the render loop.
+ *  @memberof SelectionIndicatorViewModel.prototype
+ *
+ * @param{x, y}
+ *
  */
-SelectionIndicatorViewModel.prototype.update = function () {
+SelectionIndicatorViewModel.prototype.update = function (x, y) {
   if (this.showSelection && defined(this.position)) {
+    // TODO: remove print statement
+    // console.log("Clicked! 110 SelectionIndicatorViewModel");
+    if (defined(this.offset)) {
+      this.position.x -= this.offset.x;
+      this.position.y -= this.offset.y;
+      this.position.z -= this.offset.z;
+    }
+
     const screenPosition = this.computeScreenSpacePosition(
       this.position,
       screenSpacePos
     );
+
+    // console.log(this.mousePosition);
+
+    if (defined(this.mousePosition)) {
+      // offset = {
+      //   x: screenPosition.x - this.mousePosition.x,
+      //   y: screenPosition.y - this.mousePosition.y,
+      // };
+      // console.log(JSON.stringify(offset));
+      // console.log(JSON.stringify(screenPosition.x))
+      // screenPosition.x = Math.round(screenPosition.x);
+      // screenPosition.y = Math.round(screenPosition.y);
+      // console.log(JSON.stringify(this.mousePosition));
+      // console.log(JSON.stringify(screenPosition));
+      // screenPosition.x = offset.x;
+      // screenPosition.y = offset.y;
+    }
+
+    // mouseOffset
+
+    // console.log(this.offset);
+    // const screenPosition = this.position; //TODO: screenposition
+    // console.log(screenPosition); // TODO
     if (!defined(screenPosition)) {
       this._screenPositionX = offScreen;
       this._screenPositionY = offScreen;
@@ -127,11 +176,14 @@ SelectionIndicatorViewModel.prototype.update = function () {
           Math.max(screenPosition.x, -indicatorSize),
           containerWidth + indicatorSize
         ) - halfSize;
+      // - (offset.x / 2) * -1;
       screenPosition.y =
         Math.min(
           Math.max(screenPosition.y, -indicatorSize),
           containerHeight + indicatorSize
         ) - halfSize;
+
+      // console.log(JSON.stringify(screenPosition));
 
       this._screenPositionX = `${Math.floor(screenPosition.x + 0.25)}px`;
       this._screenPositionY = `${Math.floor(screenPosition.y + 0.25)}px`;

@@ -30,6 +30,7 @@ import {
   ScreenSpaceEventType,
   TimeDynamicPointCloud,
   VoxelPrimitive,
+  // Cartesian2,
 } from "@cesium/engine";
 import knockout from "../ThirdParty/knockout.js";
 import Animation from "../Animation/Animation.js";
@@ -113,10 +114,16 @@ function getCesium3DTileFeatureName(feature) {
   return "Unnamed Feature";
 }
 
+let mousePosition;
+let offsetCoords = { x: 0, y: 0, z: 0 };
+
 function pickEntity(viewer, e) {
   const picked = viewer.scene.pick(e.position);
+  // console.log(e.position); //TODO: cleanup
   if (defined(picked)) {
     const id = defaultValue(picked.id, picked.primitive.id);
+    mousePosition = e.position;
+    offsetCoords = undefined;
     if (id instanceof Entity) {
       return id;
     }
@@ -128,6 +135,8 @@ function pickEntity(viewer, e) {
         feature: picked,
       });
     }
+  } else {
+    mousePosition = undefined;
   }
 
   // No regular entity picked.  Try picking features from imagery layers.
@@ -910,6 +919,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         Property.getValueOrUndefined(entity.position, that.clock.currentTime)
       ) {
         that.trackedEntity = entity;
+        // mousePosition = e.position; //TODO: mouse position
       } else {
         that.zoomTo(entity);
       }
@@ -920,6 +930,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 
   function pickAndSelectObject(e) {
     that.selectedEntity = pickEntity(that, e);
+    // mousePosition = e.position; // TODO: mouse selection
   }
 
   cesiumWidget.screenSpaceEventHandler.setInputAction(
@@ -1867,9 +1878,50 @@ Viewer.prototype._onTick = function (clock) {
     ? this._selectionIndicator.viewModel
     : undefined;
   if (defined(selectionIndicatorViewModel)) {
-    selectionIndicatorViewModel.position = Cartesian3.clone(
-      position,
-      selectionIndicatorViewModel.position
+    if (defined(mousePosition)) {
+      if (!defined(offsetCoords)) {
+        const result = this.camera.pickEllipsoid(
+          mousePosition,
+          this.scene.globe.ellipsoid
+        );
+
+        if (defined(result)) {
+          console.log("defined");
+          selectionIndicatorViewModel.mousePosition = Cartesian3.clone(
+            result,
+            selectionIndicatorViewModel.mousePosition
+          );
+          offsetCoords = {
+            x: position.x - result.x,
+            y: position.y - result.y,
+            z: position.z - result.z,
+          };
+        } else {
+          offsetCoords = { x: 0, y: 0, z: 0 };
+          console.log("not defined");
+        }
+
+        selectionIndicatorViewModel.offset = Cartesian3.clone(
+          // mousePosition, // TODO: mousposition
+          offsetCoords,
+          selectionIndicatorViewModel.offset
+        );
+      }
+
+      // console.log(JSON.stringify(offsetCoords)); // TODO : cleanup
+
+      selectionIndicatorViewModel.position = Cartesian3.clone(
+        // mousePosition, // TODO: mousposition
+        position,
+        selectionIndicatorViewModel.position
+      );
+    } else {
+      offsetCoords = undefined;
+    }
+
+    selectionIndicatorViewModel.mousePosition = Cartesian3.clone(
+      mousePosition, // TODO: mouseposition
+      selectionIndicatorViewModel.mousePosition
     );
     selectionIndicatorViewModel.showSelection = showSelection && enableCamera;
     selectionIndicatorViewModel.update();
