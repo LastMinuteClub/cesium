@@ -42,24 +42,24 @@ css: { "cesium-selection-wrapper-visible" : isVisible }'
 
   const svgNS = "http://www.w3.org/2000/svg";
   // const path =
-  //   "M -34 -34 L -34 -11.25 L -30 -15.25 L -30 -30 L -15.25 -30 L -11.25 -34 L -34 -34 z M 11.25 -34 L 15.25 -30 L 30 -30 L 30 -15.25 L 34 -11.25 L 34 -34 L 11.25 -34 z M -34 11.25 L -34 34 L -11.25 34 L -15.25 30 L -30 30 L -30 15.25 L -34 11.25 z M 34 11.25 L 30 15.25 L 30 30 L 15.25 30 L 11.25 34 L 34 34 L 34 11.25 z";
+  //   "M -34 -34 L -34 -11.25 L -30 -15.25 L -30 -30 L -15.25 -30 L -11.25 -34 L -34 -34 z M 11.25 -34 L 15.25 -30 L 30 -30 L 30 -15.25 L 34 -11.25 L 34 -34 L 11.25 -34 z M -34 11.25 L -34 34 L -11.25 34 L -15.25 30 L -30 30 L -30 15.25 L -34 11.25 z M 34 11.25 L 30 15.25 L 30 30 L 15.25 30 L 11.25 34 L 34 34 L 34 11.25 z"; // original indicator
 
-  // const path = "M cx cy m -r, 0 a r,r 0 1,1 (r * 2),0 a r,r 0 1,1 -(r * 2),0";
-  // const path = " M 195 283 A 100 100 0 1 1 237 280";
-  // const path = "m 10 10 l 0 20 l 30 30 z";
-  // const path = "M 0 0 C 100 0, 0 100, 100 100";
+  const width = 160;
+  const height = 160;
+  const radius = 13;
+
   const path = `M 0, 0
-  m -25, 0
-  a 25,25 0 1,0 50,0
-  a 25,25 0 1,0 -50,0`;
+  m -${radius}, 0
+  a ${radius},${radius} 0 1,0 ${radius * 2},0
+  a ${radius},${radius} 0 1,0 -${radius * 2},0`;
 
   const svg = document.createElementNS(svgNS, "svg:svg");
-  svg.setAttribute("width", 200);
-  svg.setAttribute("height", 200);
-  svg.setAttribute("viewBox", "0 0 200 200");
+  svg.setAttribute("width", width); // sets the width and height of the viewbox
+  svg.setAttribute("height", height);
+  svg.setAttribute("viewBox", `0 0 ${width} ${height}`); // 'canvas' size
 
   const group = document.createElementNS(svgNS, "g");
-  group.setAttribute("transform", "translate(80,80)");
+  group.setAttribute("transform", `translate(80, 80)`); // translates canvas within the width & height
   svg.appendChild(group);
 
   const pathElement = document.createElementNS(svgNS, "path");

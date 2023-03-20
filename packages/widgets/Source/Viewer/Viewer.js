@@ -1495,6 +1495,11 @@ Object.defineProperties(Viewer.prototype, {
           selectionIndicatorViewModel.animateDepart();
         }
         this._selectedEntityChanged.raiseEvent(value);
+      } else {
+        const selectionIndicatorViewModel = defined(this._selectionIndicator)
+          ? this._selectionIndicator.viewModel
+          : undefined;
+        selectionIndicatorViewModel.animateReappear();
       }
     },
   },
@@ -1885,8 +1890,17 @@ Viewer.prototype._onTick = function (clock) {
           this.scene.globe.ellipsoid
         );
 
-        if (defined(result)) {
-          console.log("defined");
+        const whiteListed =
+          (defined(selectedEntity.polyline) &&
+            defined(selectedEntity.polyline.clampToGround)) ||
+          (defined(selectedEntity.polygon) &&
+            (!defined(selectedEntity.polygon.height) ||
+              (defined(selectedEntity.polygon.height) &&
+                selectedEntity.polygon.height._value === 0)) &&
+            !defined(selectedEntity.polygon.extrudedHeight));
+
+        console.log(selectedEntity);
+        if (defined(result) && whiteListed) {
           selectionIndicatorViewModel.mousePosition = Cartesian3.clone(
             result,
             selectionIndicatorViewModel.mousePosition
@@ -1897,21 +1911,25 @@ Viewer.prototype._onTick = function (clock) {
             z: position.z - result.z,
           };
         } else {
+          // if space is clicked
           offsetCoords = { x: 0, y: 0, z: 0 };
-          console.log("not defined");
+          console.log("rejected");
+          // if(selectedEntity.)
+          if (
+            defined(selectedEntity.polyline) &&
+            !defined(selectedEntity.polyline.clampToGround)
+          ) {
+            console.log("polyline");
+          }
         }
 
         selectionIndicatorViewModel.offset = Cartesian3.clone(
-          // mousePosition, // TODO: mousposition
           offsetCoords,
           selectionIndicatorViewModel.offset
         );
       }
 
-      // console.log(JSON.stringify(offsetCoords)); // TODO : cleanup
-
       selectionIndicatorViewModel.position = Cartesian3.clone(
-        // mousePosition, // TODO: mousposition
         position,
         selectionIndicatorViewModel.position
       );
@@ -1920,7 +1938,7 @@ Viewer.prototype._onTick = function (clock) {
     }
 
     selectionIndicatorViewModel.mousePosition = Cartesian3.clone(
-      mousePosition, // TODO: mouseposition
+      mousePosition,
       selectionIndicatorViewModel.mousePosition
     );
     selectionIndicatorViewModel.showSelection = showSelection && enableCamera;
