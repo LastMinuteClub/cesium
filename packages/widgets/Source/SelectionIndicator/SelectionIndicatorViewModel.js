@@ -121,7 +121,6 @@ function SelectionIndicatorViewModel(
  * This function should be called as part of the render loop.
  *  @memberof SelectionIndicatorViewModel.prototype
  *
- * @param{x, y}
  *
  */
 SelectionIndicatorViewModel.prototype.update = function (x, y) {

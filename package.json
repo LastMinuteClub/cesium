@@ -119,7 +119,7 @@
   },
   "scripts": {
     "prepare": "gulp prepare && husky install",
-    "start": "node server.js",
+    "start": "node server.js && build-watch",
     "start-public": "node server.js --public",
     "build": "gulp build",
     "build-release": "gulp buildRelease",

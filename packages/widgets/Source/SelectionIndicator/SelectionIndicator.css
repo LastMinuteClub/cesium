@@ -15,7 +15,7 @@
 }
 
 .cesium-selection-wrapper svg {
-  fill: rgba(34, 238, 34, 0.75);
+  fill: rgba(34, 238, 34, 0.6);
   stroke: #000000;
   stroke-width: 1.1px;
 }
